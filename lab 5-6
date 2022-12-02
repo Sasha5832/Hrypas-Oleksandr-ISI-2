@@ -1,0 +1,53 @@
+# Hrypas Oleksandr isi 2 Lab 5-6
+#Zadanie 2
+select * from ekwipunek;
+select * from zasob where rodzaj='jedzenie';
+use hrypaso;
+select * from zasob;
+select * from kreatura;
+# id_zasobu=1 or id_zasobu=3 or id_zasobu=5;
+
+
+select nazwa from kreatura where rodzaj!='wiedzma' and waga>= 50;
+select nazwa from zasob where waga>= 2 and waga <=5;
+select nazwa from kreatura where nazwa like '%or%' and waga>= 30 and waga <=70;
+# zadanie 3
+# 1)
+select nazwa from zasob where month(dataPozyskania) in (7,8);
+select dataUr, month(dataUr), year(dataUr), day(dataUr) from kreatura;
+# 2)
+select nazwa, rodzaj from zasob where rodzaj is null;
+select nazwa from zasob where rodzaj is not null order by waga desc;
+# 3)
+select nazwa from kreatura where dataUr is not null order by dataUr asc limit 5;
+# zadanie 4 
+# 1)
+select distinct(rodzaj) from zasob;
+# 2)
+ select concat (nazwa, '-', rodzaj) from kreatura where rodzaj like 'wi%';
+# 3)
+select nazwa, ilosc*waga as waga_sumaryczna from zasob where year(dataPozyskania) in (2000,2007);
+# zadanie 5
+# 1)
+select nazwa, (ilosc*waga)*0.7 as wga_netto, (ilosc*waga)*0.3 as odpadki  from zasob;
+# 2)
+select nazwa from zasob where rodzaj is null;
+# 3) 
+select distinct nazwa, rodzaj from zasob where nazwa like 'Ba%' or nazwa like '%os' order by nazwa;
+
+# Lab 6
+# zadanie 1
+select * from kreatura;
+select sum(udzwig) from kreatura;
+select avg(udzwig) from kreatura;
+select max(udzwig) from kreatura;
+select min(udzwig) from kreatura;
+select count(udzwig) from kreatura;
+
+select avg(udzwig) from kreatura;
+
+# 2)
+select rodzaj, avg(waga), count(*) from kreatura k group by k.rodzaj;
+# 3)
+
+select rodzaj, avg (year (dataUr)) from kreatura k group by k.rodzaj;
