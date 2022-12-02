@@ -51,3 +51,6 @@ select rodzaj, avg(waga), count(*) from kreatura k group by k.rodzaj;
 # 3)
 
 select rodzaj, avg (year (dataUr)) from kreatura k group by k.rodzaj;
+# zadanie 2
+
+select sum(waga)
