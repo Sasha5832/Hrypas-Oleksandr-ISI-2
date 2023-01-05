@@ -1,0 +1,87 @@
+# 05.01.2023
+# 1)
+use __firma_zti;
+select * from __firma_zti.status_zamowienia; 
+select p.imie, p.nazwisko, d.nazwa 
+from pracownik p inner join dzial d on p.dzial = d.id_dzialu
+group by p.imie;
+# 2)
+select t.nazwa_towaru, k.nazwa_kategori, s.ilosc
+from towar t inner join kategoria k on t.kategoria=k.id_kategori
+inner join stan_magazynowy s on t.id_towaru=s.towar
+order by s.ilosc desc;
+
+# 3)
+
+select z.id_zamowienia from zamowienie z inner join status_zamowienia st on z.status_zamowienia = st.id_statusu_zamowienia where z.status_zamowienia = 6;
+
+# 4)
+select k.nazwa_krotka from klient k 
+join adres_klienta ad on k.id_klienta = ad.klient 
+where ad.miejscowosc like 'Olsztyn' and ad.typ_adresu = 1;
+
+# 5)
+# zadanie 5. część 2, podzapytanie
+SELECT id_jednostki FROM jednostka_miary where id_jednostki not in (
+SELECT distinct jm FROM stan_magazynowy);
+
+ 
+
+# zadanie 5. część 2, left join - niewłaściwa kolejność tabel, działa jak inner join
+SELECT sm.jm, jm.id_jednostki FROM stan_magazynowy sm
+left join jednostka_miary jm on sm.jm=jm.id_jednostki;
+# tu właściwa kolejność
+SELECT jm.id_jednostki, sm.jm FROM jednostka_miary jm 
+left join stan_magazynowy sm on sm.jm=jm.id_jednostki;
+# pobieramy rekordy, gdzie nie znaleziono dopasowania
+SELECT jm.id_jednostki, sm.jm FROM jednostka_miary jm 
+left join stan_magazynowy sm on sm.jm=jm.id_jednostki
+where sm.jm is not null;
+
+
+# 6)
+SELECT zamowienie.numer_zamowienia,towar.nazwa_towaru,pozycja_zamowienia.ilosc,pozycja_zamowienia.cena FROM zamowienie 
+INNER JOIN pozycja_zamowienia ON zamowienie.id_zamowienia=pozycja_zamowienia.zamowienie INNER JOIN towar ON pozycja_zamowienia.towar=towar.id_towaru
+WHERE year(data_zamowienia)=2018;
+
+# 7)
+# create table _full_info select nazwa towaru, cena zakupu, kategoria, ilosc, jednostka miary from wikingowie.kreatura;
+
+CREATE TABLE hrypaso.towary_full_info AS
+SELECT towar.nazwa_towaru,towar.cena_zakupu,kategoria.nazwa_kategori,stan_magazynowy.ilosc,jednostka_miary.nazwa FROM towar INNER JOIN kategoria ON towar.kategoria=kategoria.id_kategori
+INNER JOIN stan_magazynowy ON towar.id_towaru=stan_magazynowy.towar INNER JOIN jednostka_miary ON jednostka_miary.id_jednostki=stan_magazynowy.jm;
+
+CREATE TABLE towary_full_info AS 
+(SELECT towar.nazwa_towaru, towar.cena_zakupu, kategoria.nazwa_kategori, stan_magazynowy.ilosc, jednostka_miary.nazwa FROM towar INNER JOIN kategoria ON towar.kategoria=kategoria.id_kategori INNER JOIN stan_magazynowy ON towar.id_towaru=stan_magazynowy.towar INNER JOIN jednostka_miary ON stan_magazynowy.jm=jednostka_miary.id_jednostki);
+use __firma_zti;
+
+# 8)
+
+SELECT pozycja_zamowienia.* FROM pozycja_zamowienia 
+INNER JOIN zamowienie ON zamowienie.id_zamowienia=pozycja_zamowienia.zamowienie 
+ORDER BY zamowienie.data_zamowienia ASC LIMIT 5;
+
+# 9)
+
+# select nazwa_statusu_zamowienia from status_zamowienia;
+# SELECT zamowienie.*, status_zamowienia.nazwa_statusu_zamowienia FROM zamowienie INNER JOIN status_zamowienia ON status_zamowienia.id_statusu_zamowienia = zamowienie.status_zamowienia WHERE nazwa_statusu_zamowienia <> "zrealizowane"
+
+select z.id_zamowienia from zamowienie z 
+inner join status_zamowienia st on z.status_zamowienia = st.id_statusu_zamowienia 
+where z.status_zamowienia != 5;
+
+# 10)
+SELECT * 
+FROM adres_klienta
+WHERE kod NOT REGEXP "^[0-9][0-9]-[0-9][0-9][0-9]$";
+
+
+# lab 3
+
+# 3)
+select d.nazwa, count(id_pracownika=id_dzialu) 
+from pracownik p inner join dzial d on
+p.dzial = d.id_dzialu group by d.nazwa;
+
+select d.id_dzialu, count(p.id_pracownika) from pracownik p inner join dzial d on p.dzial=d.id_dzialu group by d.id_dzialu;
+# 4)
