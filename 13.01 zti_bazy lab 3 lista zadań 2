@@ -1,0 +1,74 @@
+#13.01 Hrypas Oleksandr ISI 2
+# lab 3
+# Zadanie czesc 2
+# 1)
+select d.nazwa, min(p.pensja), max(p.pensja), avg(p.pensja) 
+from dzial d inner join pracownik p on d.id_dzialu=p.dzial group by d.nazwa;
+
+# 2)
+select k.pelna_nazwa, SUM(p.ilosc*p.cena) as wartosc
+from klient k inner join zamowienie z on k.id_klienta=z.klient
+inner join pozycja_zamowienia p on z.id_zamowienia=p.zamowienie GROUP BY k.id_klienta 
+order by wartosc DESC limit 10;
+
+# 3) 
+select YEAR(zamowienie.data_zamowienia)as rok,sum(pozycja_zamowienia.ilosc*pozycja_zamowienia.cena) as przychod
+from zamowienie
+inner join pozycja_zamowienia on(zamowienie.id_zamowienia=pozycja_zamowienia.zamowienie)
+group by YEAR(zamowienie.data_zamowienia) order by przychod desc;
+
+# 4) 
+select SUM(pz.ilosc*pz.cena) as wartosc 
+from zamowienie z inner join status_zamowienia st on z.status_zamowienia=st.id_statusu_zamowienia
+inner join pozycja_zamowienia pz on z.id_zamowienia=pz.zamowienie
+where nazwa_statusu_zamowienia="anulowane";
+
+# 5)
+select pz.ilosc, SUM(pz.ilosc*pz.cena) as wartosc, ak.miejscowosc from
+klient k inner join zamowienie z on k.id_klienta=z.klient
+inner join pozycja_zamowienia pz on z.id_zamowienia=pz.zamowienie
+inner join adres_klienta ak on k.id_klienta=ak.klient
+inner join typ_adresu ta on ak.typ_adresu=ta.id_typu
+where ta.nazwa="podstawowy" group by ak.miejscowosc;
+
+
+select nazwa from typ_adresu;
+select miejscowosc from adres_klienta;
+
+# 6)
+SELECT sum((pozycja_zamowienia.cena-towar.cena_zakupu)*pozycja_zamowienia.ilosc) as suma 
+FROM pozycja_zamowienia 
+INNER JOIN zamowienie ON pozycja_zamowienia.zamowienie=zamowienie.id_zamowienia
+INNER JOIN towar ON pozycja_zamowienia.towar=towar.id_towaru
+INNER JOIN  status_zamowienia ON status_zamowienia.id_statusu_zamowienia=zamowienie.status_zamowienia 
+WHERE status_zamowienia.nazwa_statusu_zamowienia="zrealizowane";
+
+
+/*
+select sum(SUM(pz.ilosc*pz.cena)- sum(pz.ilosc*t.cena_zakupu))
+from zamowienie z inner join pozycja_zamowienia pz on z.id_zamowienia=pz.zamowienie
+inner join status_zamowienia sz on z.status_zamowienia=sz.id_statusu_zamowienia
+inner join towar t on pz.towar=t.id_towaru
+where nazwa_statusu_zamowienia="zrealizowane";
+*/
+# 7)
+select YEAR(zamowienie.data_zamowienia)as rok,sum(pozycja_zamowienia.ilosc*pozycja_zamowienia.cena)-sum(pozycja_zamowienia.ilosc*towar.cena_zakupu) as dochod
+from zamowienie
+inner join pozycja_zamowienia on(zamowienie.id_zamowienia=pozycja_zamowienia.zamowienie)
+inner join towar on pozycja_zamowienia.towar=towar.id_towaru
+where zamowienie.status_zamowienia=5
+group by YEAR(zamowienie.data_zamowienia);
+# 8) 
+SELECT nazwa_kategori, SUM(ilosc)*SUM(cena_zakupu) 
+FROM stan_magazynowy sm INNER JOIN towar ON sm.towar=towar.id_towaru 
+INNER JOIN kategoria ON towar.kategoria=kategoria.id_kategori 
+GROUP BY id_kategori;
+# 9)
+SELECT monthname(data_urodzenia),count(id_pracownika) 
+from pracownik GROUP BY month(data_urodzenia) 
+ORDER BY month(data_urodzenia);
+
+# 10)
+SELECT p.imie,p.nazwisko, 
+TIMESTAMPDIFF(MONTH,data_zatrudnienia,CURDATE()) * p.pensja AS koszt
+FROM pracownik AS p;
